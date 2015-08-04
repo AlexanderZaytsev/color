@@ -1,4 +1,4 @@
-class Color::RGB
+class Colour::RGB
   class << self
     private
     def named(rgb, *names)

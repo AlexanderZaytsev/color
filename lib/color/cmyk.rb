@@ -2,15 +2,15 @@
 # based on additive percentages of ink. A CMYK colour of (0.3, 0, 0.8, 0.3)
 # would be mixed from 30% cyan, 0% magenta, 80% yellow, and 30% black.
 # Primarily used in four-colour printing processes.
-class Color::CMYK
-  include Color
+class Colour::CMYK
+  include Colour
 
   # The format of a DeviceCMYK colour for PDF. In color-tools 2.0 this will
   # be removed from this package and added back as a modification by the
   # PDF::Writer package.
   PDF_FORMAT_STR = "%.3f %.3f %.3f %.3f %s"
 
-  # Coerces the other Color object into CMYK.
+  # Coerces the other Colour object into CMYK.
   def coerce(other)
     other.to_cmyk
   end
@@ -18,7 +18,7 @@ class Color::CMYK
   class << self
     # Creates a CMYK colour object from fractional values 0..1.
     #
-    #   Color::CMYK.from_fraction(0.3, 0, 0.8, 0.3)
+    #   Colour::CMYK.from_fraction(0.3, 0, 0.8, 0.3)
     def from_fraction(c = 0, m = 0, y = 0, k = 0, &block)
       new(c, m, y, k, 1.0, &block)
     end
@@ -26,7 +26,7 @@ class Color::CMYK
     # Creates a CMYK colour object from percentages. Internally, the colour is
     # managed as fractional values 0..1.
     #
-    #   Color::CMYK.new(30, 0, 80, 30)
+    #   Colour::CMYK.new(30, 0, 80, 30)
     def from_percent(c = 0, m = 0, y = 0, k = 0, &block)
       new(c, m, y, k, &block)
     end
@@ -35,9 +35,9 @@ class Color::CMYK
   # Creates a CMYK colour object from percentages. Internally, the colour is
   # managed as fractional values 0..1.
   #
-  #   Color::CMYK.new(30, 0, 80, 30)
+  #   Colour::CMYK.new(30, 0, 80, 30)
   def initialize(c = 0, m = 0, y = 0, k = 0, radix = 100.0, &block) # :yields self:
-    @c, @m, @y, @k = [ c, m, y, k ].map { |v| Color.normalize(v / radix) }
+    @c, @m, @y, @k = [ c, m, y, k ].map { |v| Colour.normalize(v / radix) }
     block.call(self) if block
   end
 
@@ -119,14 +119,14 @@ class Color::CMYK
   # The Adobe method is not used by default; to enable it, pass +true+ to
   # #to_rgb.
   #
-  # Future versions of Color may offer other conversion mechanisms that
+  # Future versions of Colour may offer other conversion mechanisms that
   # offer greater colour fidelity, including recognition of ICC colour
   # profiles.
   def to_rgb(use_adobe_method = false)
     if use_adobe_method
-      Color::RGB.from_fraction(*adobe_cmyk_rgb)
+      Colour::RGB.from_fraction(*adobe_cmyk_rgb)
     else
-      Color::RGB.from_fraction(*standard_cmyk_rgb)
+      Colour::RGB.from_fraction(*standard_cmyk_rgb)
     end
   end
 
@@ -145,7 +145,7 @@ class Color::CMYK
     m = 0.587 * @m.to_f
     y = 0.114 * @y.to_f
     g = 1.0 - [1.0, c + m + y + @k].min
-    Color::GrayScale.from_fraction(g)
+    Colour::GrayScale.from_fraction(g)
   end
   alias to_greyscale to_grayscale
 
@@ -178,12 +178,12 @@ class Color::CMYK
   end
   # Sets the cyan (C) component of the CMYK colour as a percentage value.
   def cyan=(cc)
-    @c = Color.normalize(cc / 100.0)
+    @c = Colour.normalize(cc / 100.0)
   end
   # Sets the cyan (C) component of the CMYK colour as a value in the range
   # 0.0 .. 1.0.
   def c=(cc)
-    @c = Color.normalize(cc)
+    @c = Colour.normalize(cc)
   end
 
   # Returns the magenta (M) component of the CMYK colour as a percentage
@@ -198,12 +198,12 @@ class Color::CMYK
   end
   # Sets the magenta (M) component of the CMYK colour as a percentage value.
   def magenta=(mm)
-    @m = Color.normalize(mm / 100.0)
+    @m = Colour.normalize(mm / 100.0)
   end
   # Sets the magenta (M) component of the CMYK colour as a value in the
   # range 0.0 .. 1.0.
   def m=(mm)
-    @m = Color.normalize(mm)
+    @m = Colour.normalize(mm)
   end
 
   # Returns the yellow (Y) component of the CMYK colour as a percentage
@@ -218,12 +218,12 @@ class Color::CMYK
   end
   # Sets the yellow (Y) component of the CMYK colour as a percentage value.
   def yellow=(yy)
-    @y = Color.normalize(yy / 100.0)
+    @y = Colour.normalize(yy / 100.0)
   end
   # Sets the yellow (Y) component of the CMYK colour as a value in the range
   # 0.0 .. 1.0.
   def y=(kk)
-    @y = Color.normalize(kk)
+    @y = Colour.normalize(kk)
   end
 
   # Returns the black (K) component of the CMYK colour as a percentage
@@ -238,12 +238,12 @@ class Color::CMYK
   end
   # Sets the black (K) component of the CMYK colour as a percentage value.
   def black=(kk)
-    @k = Color.normalize(kk / 100.0)
+    @k = Colour.normalize(kk / 100.0)
   end
   # Sets the black (K) component of the CMYK colour as a value in the range
   # 0.0 .. 1.0.
   def k=(kk)
-    @k = Color.normalize(kk)
+    @k = Colour.normalize(kk)
   end
 
   def to_a

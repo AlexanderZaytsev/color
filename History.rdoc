@@ -1,16 +1,16 @@
 == 1.7.1 / 2014-06-12
 
 * Minor enhancements:
-  * Renamed Color::RGB::BeccaPurple to Color::RGB::RebeccaPurple as stipulated
+  * Renamed Colour::RGB::BeccaPurple to Colour::RGB::RebeccaPurple as stipulated
     by Eric Meyer. http://meyerweb.com/eric/thoughts/2014/06/19/rebeccapurple/
     For purposes of backwards compatibility, the previous name is still
     permitted, but its use is strongly discouraged, and it will be removed in
-    the Color 2.0 release.
+    the Colour 2.0 release.
 
 == 1.7 / 2014-06-12
 
 * Minor enhancements:
-  * Added Color::RGB::BeccaPurple (#663399) in honour of Rebecca Meyer, the
+  * Added Colour::RGB::BeccaPurple (#663399) in honour of Rebecca Meyer, the
     daughter of Eric Meyer, who passed away on the 7th of June, 2014. Her
     favourite colour was purple. #663399becca
     https://twitter.com/meyerweb/status/476089708674428929
@@ -36,7 +36,7 @@
     Thanks!
   * Fixed problems with Travis builds. Note that Ruby 1.9.2 is no longer
     tested. Rubinius remains in a “failure-tolerated” mode.
-  * Color 1.6 is, barring security patches, the last release of Color that will
+  * Colour 1.6 is, barring security patches, the last release of Colour that will
     support Ruby 1.8.
 
 == 1.5.1 / 2014-01-28
@@ -44,22 +44,22 @@
 * color 1.5 was a yanked release.
 
 * Minor enhancements:
-  * Added new methods to Color::RGB to make it so that the default defined
+  * Added new methods to Colour::RGB to make it so that the default defined
     colours can be looked up by hex, name, or both.
-  * Added a method to Color::RGB to extract colours from text by hex, name, or
+  * Added a method to Colour::RGB to extract colours from text by hex, name, or
     both.
   * Added new common methods for colour names. Converted colours do not retain
     names.
   * Restructured color comparisons to use protocols instead of custom
     implementations. This makes it easier to implement new colour classes. To
-    make this work, color classes should +include+ Color only need to implement
+    make this work, color classes should +include+ Colour only need to implement
     <tt>#coerce(other)</tt>, <tt>#to_a</tt>, and supported conversion methods
     (e.g., <tt>#to_rgb</tt>).
   * Added @daveheitzman’s initial implementation of an RGB contrast method as
     an extension file: <tt>require 'color/rgb/contrast'</tt>. This method and
     the value it returns should be considered experimental; it requires further
     examination to ensure that the results produced are consistent with the
-    contrast comparisons used in Color::Palette::MonoContrast.
+    contrast comparisons used in Colour::Palette::MonoContrast.
   * Reducing duplicated code.
 
 * Bug Fixes:
@@ -75,7 +75,7 @@
 == 1.4.2 / 2013-06-30
 
 Maintenance:
-* Modernized Hoe installation of Color, removing some dependencies.
+* Modernized Hoe installation of Colour, removing some dependencies.
 * Switched to Minitest.
 * Turned on Travis CI.
 * Started using Code Climate.
@@ -90,15 +90,15 @@ Maintenance:
 
 * Merged Austin Ziegler's color-tools library (previously part of the Ruby
   PDF Tools project) with Matt Lyon's color library.
-  - The HSL implementation from the Color class has been merged into
-    Color::HSL. Color is a module the way it was for color-tools.
-  - A thin veneer has been written to allow Color::new to return a Color::HSL
-    instance; Color::HSL supports as many methods as possible that were
-    previously supported by the Color class.
-  - Values that were previously rounded by Color are no longer rounded;
+  - The HSL implementation from the Colour class has been merged into
+    Colour::HSL. Colour is a module the way it was for color-tools.
+  - A thin veneer has been written to allow Colour::new to return a Colour::HSL
+    instance; Colour::HSL supports as many methods as possible that were
+    previously supported by the Colour class.
+  - Values that were previously rounded by Colour are no longer rounded;
     fractional values matter.
 * Converted to hoe for project management.
-* Moved to the next step of deprecating Color::Name values; printing a
+* Moved to the next step of deprecating Colour::Name values; printing a
   warning for each use (see the history for color-tools 1.3.0).
 * Print a warning on the access of either VERSION or COLOR_TOOLS_VERSION; the
   version constant is now COLOR_VERSION.
@@ -106,25 +106,25 @@ Maintenance:
   and #c to access the cyan component of the colour; #cyan provides the value
   as a percentage).
 * Added CSS3 formatters for RGB, RGBA, HSL, and HSLA outputs. Note that the
-  Color library does not yet have a way of setting alpha opacity, so the
+  Colour library does not yet have a way of setting alpha opacity, so the
   output for RGBA and HSLA are at full alpha opacity (1.0). The values are
   output with two decimal places.
 * Applied a patch to provide simple arithmetic colour addition and subtraction
-  to Color::GrayScale and Color::RGB. The patch was contributed by Jeremy
+  to Colour::GrayScale and Colour::RGB. The patch was contributed by Jeremy
   Hinegardner <jeremy@hinegardner.org>. This patch also provides the ability to
   return the maximum RGB value as a grayscale colour.
 * Fixed two problems reported by Jean Krohn <jb.krohn@free.fr> against
-  color-tools relating to RGB-to-HSL and HSL-to-RGB conversion. (Color and
+  color-tools relating to RGB-to-HSL and HSL-to-RGB conversion. (Colour and
   color-tools use the same formulas, but the ordering of the calculations is
-  slightly different with Color and did not suffer from this problem;
+  slightly different with Colour and did not suffer from this problem;
   color-tools was more sensitive to floating-point values and precision
   errors.)
 * Fixed an issue with HSL/RGB conversions reported by Adam Johnson
   <adam.sven.johnson@gmail.com>.
-* Added an Adobe Color swatch (Photoshop) palette reader,
-  Color::Palette::AdobeColor (for .aco files only).
+* Added an Adobe Colour swatch (Photoshop) palette reader,
+  Colour::Palette::AdobeColour (for .aco files only).
 
-== Color 0.1.0 / 2006-08-05
+== Colour 0.1.0 / 2006-08-05
 
 * Added HSL (degree, percent, percent) interface.
 * Removed RGB instance variable; color is managed internally as HSL floating
@@ -134,23 +134,23 @@ Maintenance:
 == color-tools 1.3.0
 
 * Added new metallic colours suggested by Jim Freeze <jfn@freeze.org>. These
-  are in the namespace Color::Metallic.
-* Colours that were defined in the Color namespace (e.g., Color::Red,
-  Color::AliceBlue) are now defined in Color::RGB (e.g., Color::RGB::Red,
-  Color::RGB::AliceBlue). They are added back to the Color namespace on the
+  are in the namespace Colour::Metallic.
+* Colours that were defined in the Colour namespace (e.g., Colour::Red,
+  Colour::AliceBlue) are now defined in Colour::RGB (e.g., Colour::RGB::Red,
+  Colour::RGB::AliceBlue). They are added back to the Colour namespace on the
   first use of the old colours and a warning is printed. In version 1.4, this
   warning will be printed on every use of the old colours. In version 1.5,
-  the backwards compatible support for colours like Color::Red will be
+  the backwards compatible support for colours like Colour::Red will be
   removed completely.
-* Added the Color::CSS module, color/css or Color::CSS that provides a name
-  lookup of Color::RGB-namespaced constants with Color::CSS[name]. Most of
-  these colours (which are mirrored from the Color::RGB default colours) are
+* Added the Colour::CSS module, color/css or Colour::CSS that provides a name
+  lookup of Colour::RGB-namespaced constants with Colour::CSS[name]. Most of
+  these colours (which are mirrored from the Colour::RGB default colours) are
   only "officially" recognised under the CSS3 colour module or SVG.
-* Added the Color::HSL colour space and some helper utilities to Color::RGB
+* Added the Colour::HSL colour space and some helper utilities to Colour::RGB
   for colour manipulation using the HSL value.
 * Controlled internal value replacement to be between 0 and 1 for all
   colours.
-* Updated Color::Palette::Gimp to more meaningfully deal with duplicate named
+* Updated Colour::Palette::Gimp to more meaningfully deal with duplicate named
   colours. Named colours now return an array of colours.
 * Indicated the plans for some methods and constants out to color-tools 2.0.
 * Added unit tests and fixed a number of hidden bugs because of them.
@@ -158,8 +158,8 @@ Maintenance:
 == color-tools 1.2.0
 * Changed installer from a custom-written install.rb to setup.rb
   3.3.1-modified.
-* Added Color::GreyScale (or Color::GrayScale).
-* Added Color::YIQ. This colour definition is incomplete; it does not have
+* Added Colour::GreyScale (or Colour::GrayScale).
+* Added Colour::YIQ. This colour definition is incomplete; it does not have
   conversions from YIQ to other colour spaces.
 
 == color-tools 1.1.0

@@ -1,23 +1,23 @@
 # An RGB colour object.
-class Color::RGB
-  include Color
+class Colour::RGB
+  include Colour
 
   # The format of a DeviceRGB colour for PDF. In color-tools 2.0 this will
   # be removed from this package and added back as a modification by the
   # PDF::Writer package.
   PDF_FORMAT_STR  = "%.3f %.3f %.3f %s"
 
-  # Coerces the other Color object into RGB.
+  # Coerces the other Colour object into RGB.
   def coerce(other)
     other.to_rgb
   end
 
   # Creates an RGB colour object from the standard range 0..255.
   #
-  #   Color::RGB.new(32, 64, 128)
-  #   Color::RGB.new(0x20, 0x40, 0x80)
+  #   Colour::RGB.new(32, 64, 128)
+  #   Colour::RGB.new(0x20, 0x40, 0x80)
   def initialize(r = 0, g = 0, b = 0, radix = 255.0, &block) # :yields self:
-    @r, @g, @b = [ r, g, b ].map { |v| Color.normalize(v / radix) }
+    @r, @g, @b = [ r, g, b ].map { |v| Colour.normalize(v / radix) }
     block.call(self) if block
   end
 
@@ -119,7 +119,7 @@ class Color::RGB
     y = [1.0, [0.0, y - k].max].min
     k = [1.0, [0.0, k].max].min
 
-    Color::CMYK.from_fraction(c, m, y, k)
+    Colour::CMYK.from_fraction(c, m, y, k)
   end
 
   def to_rgb(ignored = nil)
@@ -131,7 +131,7 @@ class Color::RGB
     y = (@r * 0.299) + (@g *  0.587) + (@b *  0.114)
     i = (@r * 0.596) + (@g * -0.275) + (@b * -0.321)
     q = (@r * 0.212) + (@g * -0.523) + (@b *  0.311)
-    Color::YIQ.from_fraction(y, i, q)
+    Colour::YIQ.from_fraction(y, i, q)
   end
 
   # Returns the HSL colour encoding of the RGB value. The conversions here
@@ -144,11 +144,11 @@ class Color::RGB
 
     lum   = (max + min) / 2.0
 
-    if Color.near_zero?(delta) # close to 0.0, so it's a grey
+    if Colour.near_zero?(delta) # close to 0.0, so it's a grey
       hue = 0
       sat = 0
     else
-      if Color.near_zero_or_less?(lum - 0.5)
+      if Colour.near_zero_or_less?(lum - 0.5)
         sat = delta / (max + min).to_f
       else
         sat = delta / (2 - max - min).to_f
@@ -158,19 +158,19 @@ class Color::RGB
       # http://en.wikipedia.org/wiki/HSV_color_space#Conversion_from_RGB_to_HSL_or_HSV
       # Contributed by Adam Johnson
       sixth = 1 / 6.0
-      if @r == max # Color.near_zero_or_less?(@r - max)
+      if @r == max # Colour.near_zero_or_less?(@r - max)
         hue = (sixth * ((@g - @b) / delta))
         hue += 1.0 if @g < @b
-      elsif @g == max # Color.near_zero_or_less(@g - max)
+      elsif @g == max # Colour.near_zero_or_less(@g - max)
         hue = (sixth * ((@b - @r) / delta)) + (1.0 / 3.0)
-      elsif @b == max # Color.near_zero_or_less?(@b - max)
+      elsif @b == max # Colour.near_zero_or_less?(@b - max)
         hue = (sixth * ((@r - @g) / delta)) + (2.0 / 3.0)
       end
 
       hue += 1 if hue < 0
       hue -= 1 if hue > 1
     end
-    Color::HSL.from_fraction(hue, sat, lum)
+    Colour::HSL.from_fraction(hue, sat, lum)
   end
 
   # Returns the XYZ colour encoding of the value. Based on the
@@ -283,7 +283,7 @@ class Color::RGB
   end
   # Convert to grayscale.
   def to_grayscale
-    Color::GrayScale.from_fraction(to_hsl.l)
+    Colour::GrayScale.from_fraction(to_hsl.l)
   end
   alias to_greyscale to_grayscale
 
@@ -291,8 +291,8 @@ class Color::RGB
   # percentage. Negative percentages will darken the colour; positive
   # percentages will brighten the colour.
   #
-  #   Color::RGB::DarkBlue.adjust_brightness(10)
-  #   Color::RGB::DarkBlue.adjust_brightness(-10)
+  #   Colour::RGB::DarkBlue.adjust_brightness(10)
+  #   Colour::RGB::DarkBlue.adjust_brightness(-10)
   def adjust_brightness(percent)
     percent = normalize_percent(percent)
     hsl      = to_hsl
@@ -304,8 +304,8 @@ class Color::RGB
   # percentage. Negative percentages will reduce the saturation; positive
   # percentages will increase the saturation.
   #
-  #   Color::RGB::DarkBlue.adjust_saturation(10)
-  #   Color::RGB::DarkBlue.adjust_saturation(-10)
+  #   Colour::RGB::DarkBlue.adjust_saturation(10)
+  #   Colour::RGB::DarkBlue.adjust_saturation(-10)
   def adjust_saturation(percent)
     percent = normalize_percent(percent)
     hsl      = to_hsl
@@ -317,8 +317,8 @@ class Color::RGB
   # Negative percentages will reduce the hue; positive percentages will
   # increase the hue.
   #
-  #   Color::RGB::DarkBlue.adjust_hue(10)
-  #   Color::RGB::DarkBlue.adjust_hue(-10)
+  #   Colour::RGB::DarkBlue.adjust_hue(10)
+  #   Colour::RGB::DarkBlue.adjust_hue(-10)
   def adjust_hue(percent)
     percent = normalize_percent(percent)
     hsl      = to_hsl
@@ -364,7 +364,7 @@ class Color::RGB
   end
 
   # The Delta E (CIE94) algorithm
-  # http://en.wikipedia.org/wiki/Color_difference#CIE94
+  # http://en.wikipedia.org/wiki/Colour_difference#CIE94
   #
   # There is a newer version, CIEDE2000, that uses slightly more complicated
   # math, but addresses "the perceptual uniformity issue" left lingering by
@@ -378,7 +378,7 @@ class Color::RGB
   #
   # See also http://www.brucelindbloom.com/index.html?Eqn_DeltaE_CIE94.html
   #
-  # NOTE: This should be moved to Color::Lab.
+  # NOTE: This should be moved to Colour::Lab.
   def delta_e94(color_1, color_2, weighting_type = :graphic_arts)
     case weighting_type
     when :graphic_arts
@@ -452,16 +452,16 @@ class Color::RGB
   end
   # Sets the red component of the colour in the normal 0 .. 255 range.
   def red=(rr)
-    @r = Color.normalize(rr / 255.0)
+    @r = Colour.normalize(rr / 255.0)
   end
   # Sets the red component of the colour as a percentage.
   def red_p=(rr)
-    @r = Color.normalize(rr / 100.0)
+    @r = Colour.normalize(rr / 100.0)
   end
   # Sets the red component of the colour as a fraction in the range 0.0 ..
   # 1.0.
   def r=(rr)
-    @r = Color.normalize(rr)
+    @r = Colour.normalize(rr)
   end
 
   # Returns the green component of the colour in the normal 0 .. 255 range.
@@ -479,16 +479,16 @@ class Color::RGB
   end
   # Sets the green component of the colour in the normal 0 .. 255 range.
   def green=(gg)
-    @g = Color.normalize(gg / 255.0)
+    @g = Colour.normalize(gg / 255.0)
   end
   # Sets the green component of the colour as a percentage.
   def green_p=(gg)
-    @g = Color.normalize(gg / 100.0)
+    @g = Colour.normalize(gg / 100.0)
   end
   # Sets the green component of the colour as a fraction in the range 0.0 ..
   # 1.0.
   def g=(gg)
-    @g = Color.normalize(gg)
+    @g = Colour.normalize(gg)
   end
 
   # Returns the blue component of the colour in the normal 0 .. 255 range.
@@ -506,16 +506,16 @@ class Color::RGB
   end
   # Sets the blue component of the colour in the normal 0 .. 255 range.
   def blue=(bb)
-    @b = Color.normalize(bb / 255.0)
+    @b = Colour.normalize(bb / 255.0)
   end
   # Sets the blue component of the colour as a percentage.
   def blue_p=(bb)
-    @b = Color.normalize(bb / 100.0)
+    @b = Colour.normalize(bb / 100.0)
   end
   # Sets the blue component of the colour as a fraction in the range 0.0 ..
   # 1.0.
   def b=(bb)
-    @b = Color.normalize(bb)
+    @b = Colour.normalize(bb)
   end
 
   # Adds another colour to the current colour. The other colour will be
@@ -541,7 +541,7 @@ class Color::RGB
   # Retrieve the maxmum RGB value from the current colour as a GrayScale
   # colour
   def max_rgb_as_grayscale
-    Color::GrayScale.from_fraction([@r, @g, @b].max)
+    Colour::GrayScale.from_fraction([@r, @g, @b].max)
   end
   alias max_rgb_as_greyscale max_rgb_as_grayscale
 
@@ -573,17 +573,17 @@ class Color::RGB
   end
 end
 
-class << Color::RGB
+class << Colour::RGB
   # Creates an RGB colour object from percentages 0..100.
   #
-  #   Color::RGB.from_percentage(10, 20, 30)
+  #   Colour::RGB.from_percentage(10, 20, 30)
   def from_percentage(r = 0, g = 0, b = 0, &block)
     new(r, g, b, 100.0, &block)
   end
 
   # Creates an RGB colour object from fractional values 0..1.
   #
-  #   Color::RGB.from_fraction(.3, .2, .1)
+  #   Colour::RGB.from_fraction(.3, .2, .1)
   def from_fraction(r = 0.0, g = 0.0, b = 0.0, &block)
     new(r, g, b, 1.0, &block)
   end
@@ -597,10 +597,10 @@ class << Color::RGB
   # Creates an RGB colour object from an HTML colour descriptor (e.g.,
   # <tt>"fed"</tt> or <tt>"#cabbed;"</tt>.
   #
-  #   Color::RGB.from_html("fed")
-  #   Color::RGB.from_html("#fed")
-  #   Color::RGB.from_html("#cabbed")
-  #   Color::RGB.from_html("cabbed")
+  #   Colour::RGB.from_html("fed")
+  #   Colour::RGB.from_html("#fed")
+  #   Colour::RGB.from_html("#cabbed")
+  #   Colour::RGB.from_html("cabbed")
   def from_html(html_colour, &block)
     # When we can move to 1.9+ only, this will be \h
     h = html_colour.scan(/[0-9a-f]/i)
@@ -618,8 +618,8 @@ class << Color::RGB
   # #from_html method in that if the colour code matches a named colour,
   # the existing colour will be returned.
   #
-  #     Color::RGB.by_hex('ff0000').name # => 'red'
-  #     Color::RGB.by_hex('ff0001').name # => nil
+  #     Colour::RGB.by_hex('ff0000').name # => 'red'
+  #     Colour::RGB.by_hex('ff0001').name # => nil
   #
   # If a block is provided, the value that is returned by the block will
   # be returned instead of the exception caused by an error in providing a
@@ -669,7 +669,7 @@ class << Color::RGB
   end
 end
 
-class << Color::RGB
+class << Colour::RGB
   private
   def __named_color(mod, rgb, *names)
     if names.any? { |n| mod.const_defined? n }

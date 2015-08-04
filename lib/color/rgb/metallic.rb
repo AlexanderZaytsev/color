@@ -1,6 +1,6 @@
 # -*- ruby encoding: utf-8 -*-
 
-class Color::RGB
+class Colour::RGB
   # This namespace contains some RGB metallic colours suggested by Jim
   # Freeze.
   module Metallic; end

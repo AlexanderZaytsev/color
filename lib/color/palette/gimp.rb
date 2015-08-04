@@ -7,24 +7,24 @@ require 'color/palette'
 # Because two or more entries in a GIMP palette may have the same name, all
 # named entries are returned as an array.
 #
-#   pal = Color::Palette::Gimp.from_file(my_gimp_palette)
-#   pal[0]          => Color::RGB<...>
-#   pal["white"]    => [ Color::RGB<...> ]
-#   pal["unknown"]  => [ Color::RGB<...>, Color::RGB<...>, ... ]
+#   pal = Colour::Palette::Gimp.from_file(my_gimp_palette)
+#   pal[0]          => Colour::RGB<...>
+#   pal["white"]    => [ Colour::RGB<...> ]
+#   pal["unknown"]  => [ Colour::RGB<...>, Colour::RGB<...>, ... ]
 #
 # GIMP Palettes are always indexable by insertion order (an integer key).
-class Color::Palette::Gimp
+class Colour::Palette::Gimp
   include Enumerable
 
   class << self
     # Create a GIMP palette object from the named file.
     def from_file(filename)
-      File.open(filename, "rb") { |io| Color::Palette::Gimp.from_io(io) }
+      File.open(filename, "rb") { |io| Colour::Palette::Gimp.from_io(io) }
     end
 
     # Create a GIMP palette object from the provided IO.
     def from_io(io)
-      Color::Palette::Gimp.new(io.read)
+      Colour::Palette::Gimp.new(io.read)
     end
   end
 
@@ -57,7 +57,7 @@ class Color::Palette::Gimp
       name = data.pop.strip
       data.map! { |el| el.to_i }
 
-      color = Color::RGB.new(*data)
+      color = Colour::RGB.new(*data)
 
       @colors << color
       @names[name] ||= []

@@ -1,6 +1,6 @@
 # -*- ruby encoding: utf-8 -*-
 
-class Color::RGB
+class Colour::RGB
   # Outputs how much contrast this color has with another RGB color.
   # Computes the same regardless of which one is considered foreground. If
   # the other color does not have a #to_rgb method, this will throw an

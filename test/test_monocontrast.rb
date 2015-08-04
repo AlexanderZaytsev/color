@@ -4,13 +4,13 @@ require 'color'
 require 'color/palette/monocontrast'
 require 'minitest_helper'
 
-module TestColor
+module TestColour
   module TestPalette
     class TestMonoContrast < Minitest::Test
-      include Color::Palette
+      include Colour::Palette
       def setup
-        @high = Color::RGB.from_html("#c9e3a6")
-        @low  = Color::RGB.from_html("#746b8e")
+        @high = Colour::RGB.from_html("#c9e3a6")
+        @low  = Colour::RGB.from_html("#746b8e")
         @mcp1 = MonoContrast.new(@high)
         @mcp2 = MonoContrast.new(@low)
       end
@@ -44,7 +44,7 @@ module TestColor
       def test_brightness_diff
         bd1 = @mcp1.brightness_diff(@high, @low)
         bd2 = @mcp1.brightness_diff(@low, @high)
-        assert_in_delta(bd1, bd2, Color::COLOR_TOLERANCE)
+        assert_in_delta(bd1, bd2, Colour::COLOR_TOLERANCE)
       end
 
       def test_calculate_foreground
@@ -55,7 +55,7 @@ module TestColor
       def test_color_diff
         assert_in_delta(@mcp1.color_diff(@low, @high),
                         @mcp1.color_diff(@high, @low),
-                        Color::COLOR_TOLERANCE)
+                        Colour::COLOR_TOLERANCE)
       end
 
       def test_foreground
@@ -86,44 +86,44 @@ module TestColor
 
       def test_minimum_brightness_diff
         assert_in_delta(MonoContrast::DEFAULT_MINIMUM_BRIGHTNESS_DIFF,
-                        @mcp1.minimum_brightness_diff, Color::COLOR_TOLERANCE)
+                        @mcp1.minimum_brightness_diff, Colour::COLOR_TOLERANCE)
       end
 
       def test_minimum_brightness_diff_equals
         assert_in_delta(MonoContrast::DEFAULT_MINIMUM_BRIGHTNESS_DIFF,
-                        @mcp1.minimum_brightness_diff, Color::COLOR_TOLERANCE)
+                        @mcp1.minimum_brightness_diff, Colour::COLOR_TOLERANCE)
         mcps = @mcp1.dup
         @mcp1.minimum_brightness_diff = 0.75
-        assert_in_delta(0.75, @mcp1.minimum_brightness_diff, Color::COLOR_TOLERANCE)
+        assert_in_delta(0.75, @mcp1.minimum_brightness_diff, Colour::COLOR_TOLERANCE)
         refute_equal(@mcp1.foreground[-5], mcps.foreground[-5])
         @mcp1.minimum_brightness_diff = 4.0
-        assert_in_delta(1, @mcp1.minimum_brightness_diff, Color::COLOR_TOLERANCE)
+        assert_in_delta(1, @mcp1.minimum_brightness_diff, Colour::COLOR_TOLERANCE)
         @mcp1.minimum_brightness_diff = -4.0
-        assert_in_delta(0, @mcp1.minimum_brightness_diff, Color::COLOR_TOLERANCE)
+        assert_in_delta(0, @mcp1.minimum_brightness_diff, Colour::COLOR_TOLERANCE)
         @mcp1.minimum_brightness_diff = nil
         assert_in_delta(MonoContrast::DEFAULT_MINIMUM_BRIGHTNESS_DIFF,
-                        @mcp1.minimum_brightness_diff, Color::COLOR_TOLERANCE)
+                        @mcp1.minimum_brightness_diff, Colour::COLOR_TOLERANCE)
       end
 
       def test_minimum_color_diff
         assert_in_delta(MonoContrast::DEFAULT_MINIMUM_COLOR_DIFF,
-                        @mcp1.minimum_color_diff, Color::COLOR_TOLERANCE)
+                        @mcp1.minimum_color_diff, Colour::COLOR_TOLERANCE)
       end
 
       def test_minimum_color_diff_equals
         assert_in_delta(MonoContrast::DEFAULT_MINIMUM_COLOR_DIFF,
-                        @mcp1.minimum_color_diff, Color::COLOR_TOLERANCE)
+                        @mcp1.minimum_color_diff, Colour::COLOR_TOLERANCE)
         mcps = @mcp1.dup
         @mcp1.minimum_color_diff = 0.75
-        assert_in_delta(0.75, @mcp1.minimum_color_diff, Color::COLOR_TOLERANCE)
+        assert_in_delta(0.75, @mcp1.minimum_color_diff, Colour::COLOR_TOLERANCE)
         refute_equal(@mcp1.foreground[-5], mcps.foreground[-5])
         @mcp1.minimum_color_diff = 4.0
-        assert_in_delta(3, @mcp1.minimum_color_diff, Color::COLOR_TOLERANCE)
+        assert_in_delta(3, @mcp1.minimum_color_diff, Colour::COLOR_TOLERANCE)
         @mcp1.minimum_color_diff = -4.0
-        assert_in_delta(0, @mcp1.minimum_color_diff, Color::COLOR_TOLERANCE)
+        assert_in_delta(0, @mcp1.minimum_color_diff, Colour::COLOR_TOLERANCE)
         @mcp1.minimum_color_diff = nil
         assert_in_delta(MonoContrast::DEFAULT_MINIMUM_COLOR_DIFF,
-                        @mcp1.minimum_color_diff, Color::COLOR_TOLERANCE)
+                        @mcp1.minimum_color_diff, Colour::COLOR_TOLERANCE)
       end
     end
   end

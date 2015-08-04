@@ -3,8 +3,8 @@
 # An HSL colour object. Internally, the hue (#h), saturation (#s), and
 # luminosity/lightness (#l) values are dealt with as fractional values in
 # the range 0..1.
-class Color::HSL
-  include Color
+class Colour::HSL
+  include Colour
 
   class << self
     # Creates an HSL colour object from fractional values 0..1.
@@ -13,7 +13,7 @@ class Color::HSL
     end
   end
 
-  # Coerces the other Color object into HSL.
+  # Coerces the other Colour object into HSL.
   def coerce(other)
     other.to_hsl
   end
@@ -21,9 +21,9 @@ class Color::HSL
   # Creates an HSL colour object from the standard values of degrees and
   # percentages (e.g., 145 deg, 30%, 50%).
   def initialize(h = 0, s = 0, l = 0, radix1 = 360.0, radix2 = 100.0, &block) # :yields self:
-    @h = Color.normalize(h / radix1)
-    @s = Color.normalize(s / radix2)
-    @l = Color.normalize(l / radix2)
+    @h = Colour.normalize(h / radix1)
+    @s = Colour.normalize(s / radix2)
+    @l = Colour.normalize(l / radix2)
     block.call if block
   end
 
@@ -63,24 +63,24 @@ class Color::HSL
   # originally found at [1] (implemented similarly at [2]).
   #
   # This simplifies the calculations with the following assumptions:
-  # - Luminance values <= 0 always translate to Color::RGB::Black.
-  # - Luminance values >= 1 always translate to Color::RGB::White.
+  # - Luminance values <= 0 always translate to Colour::RGB::Black.
+  # - Luminance values >= 1 always translate to Colour::RGB::White.
   # - Saturation values <= 0 always translate to a shade of gray using
   #   luminance as a percentage of gray.
   #
   # [1] http://bobpowell.net/RGBHSB.aspx
   # [2] http://support.microsoft.com/kb/29240
   def to_rgb(*)
-    if Color.near_zero_or_less?(l)
-      Color::RGB::Black
-    elsif Color.near_one_or_more?(l)
-      Color::RGB::White
-    elsif Color.near_zero?(s)
-      Color::RGB.from_grayscale_fraction(l)
+    if Colour.near_zero_or_less?(l)
+      Colour::RGB::Black
+    elsif Colour.near_one_or_more?(l)
+      Colour::RGB::White
+    elsif Colour.near_zero?(s)
+      Colour::RGB.from_grayscale_fraction(l)
     else
       # Only needed for Ruby 1.8. For Ruby 1.9+, we can do:
-      # Color::RGB.new(*compute_fvd_rgb, 1.0)
-      Color::RGB.new(*(compute_fvd_rgb + [ 1.0 ]))
+      # Colour::RGB.new(*compute_fvd_rgb, 1.0)
+      Colour::RGB.new(*(compute_fvd_rgb + [ 1.0 ]))
     end
   end
 
@@ -99,7 +99,7 @@ class Color::HSL
     @l
   end
   def to_greyscale
-    Color::GrayScale.from_fraction(@l)
+    Colour::GrayScale.from_fraction(@l)
   end
   alias to_grayscale to_greyscale
 
@@ -119,11 +119,11 @@ class Color::HSL
     hh += 1.0 if hh < 0.0
     hh -= 1.0 if hh > 1.0
 
-    @h = Color.normalize(hh)
+    @h = Colour.normalize(hh)
   end
   # Sets the hue of the colour in the range 0.0 .. 1.0.
   def h=(hh)
-    @h = Color.normalize(hh)
+    @h = Colour.normalize(hh)
   end
   # Returns the percentage of saturation of the colour.
   def saturation
@@ -135,11 +135,11 @@ class Color::HSL
   end
   # Sets the percentage of saturation of the colour.
   def saturation=(ss)
-    @s = Color.normalize(ss / 100.0)
+    @s = Colour.normalize(ss / 100.0)
   end
   # Sets the saturation of the colour in the ragne 0.0 .. 1.0.
   def s=(ss)
-    @s = Color.normalize(ss)
+    @s = Colour.normalize(ss)
   end
 
   # Returns the percentage of luminosity of the colour.
@@ -153,12 +153,12 @@ class Color::HSL
   end
   # Sets the percentage of luminosity of the colour.
   def luminosity=(ll)
-    @l = Color.normalize(ll / 100.0)
+    @l = Colour.normalize(ll / 100.0)
   end
   alias lightness= luminosity= ;
   # Sets the luminosity of the colour in the ragne 0.0 .. 1.0.
   def l=(ll)
-    @l = Color.normalize(ll)
+    @l = Colour.normalize(ll)
   end
 
   def to_hsl
@@ -172,7 +172,7 @@ class Color::HSL
   # Mix the mask colour (which will be converted to an HSL colour) with the
   # current colour at the stated mix percentage as a decimal value.
   #
-  # NOTE:: This differs from Color::RGB#mix_with.
+  # NOTE:: This differs from Colour::RGB#mix_with.
   def mix_with(color, mix_percent = 0.5)
     v = to_a.zip(coerce(color).to_a).map { |(x, y)|
       ((y - x) * mix_percent) + x
@@ -201,7 +201,7 @@ class Color::HSL
   # Mix saturation and luminance for use in hue_to_rgb. The base value is
   # different depending on whether luminance is <= 50% or > 50%.
   def fvd_mix_sat_lum
-    t = if Color.near_zero_or_less?(l - 0.5)
+    t = if Colour.near_zero_or_less?(l - 0.5)
              l * (1.0 + s.to_f)
            else
              l + s - (l * s.to_f)
@@ -213,8 +213,8 @@ class Color::HSL
   # itself is endless; therefore, we can rotate around. The only thing our
   # implementation restricts is that you should not be > 1.0.
   def rotate_hue(h)
-    h += 1.0 if Color.near_zero_or_less?(h)
-    h -= 1.0 if Color.near_one_or_more?(h)
+    h += 1.0 if Colour.near_zero_or_less?(h)
+    h -= 1.0 if Colour.near_one_or_more?(h)
     h
   end
 
@@ -227,11 +227,11 @@ class Color::HSL
   # - The third quadrant covers the next 60º (180º, 240º].
   # - The fourth quadrant covers the final 120º (240º, 360º).
   def hue_to_rgb(h, t1, t2)
-    if Color.near_zero_or_less?((6.0 * h) - 1.0)
+    if Colour.near_zero_or_less?((6.0 * h) - 1.0)
       t1 + ((t2 - t1) * h * 6.0)
-    elsif Color.near_zero_or_less?((2.0 * h) - 1.0)
+    elsif Colour.near_zero_or_less?((2.0 * h) - 1.0)
       t2
-    elsif Color.near_zero_or_less?((3.0 * h) - 2.0)
+    elsif Colour.near_zero_or_less?((3.0 * h) - 2.0)
       t1 + (t2 - t1) * ((2 / 3.0) - h) * 6.0
     else
       t1

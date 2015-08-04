@@ -4,13 +4,13 @@ require 'color'
 require 'color/palette/adobecolor'
 require 'minitest_helper'
 
-module TestColor
+module TestColour
   module TestPalette
-    class TestAdobeColor < Minitest::Test
-      include Color::Palette
+    class TestAdobeColour < Minitest::Test
+      include Colour::Palette
 
-      # This is based on the Visibone Anglo-Centric Color Code List; this is
-      # an Adobe Color swatch version 1 (RGB colours only).
+      # This is based on the Visibone Anglo-Centric Colour Code List; this is
+      # an Adobe Colour swatch version 1 (RGB colours only).
       VISIBONE_V1 = <<-EOS
 AAEA2AAA/wD/AP8AAAAAAMwAzADMAAAAAACZAJkAmQAAAAAAZgBmAGYAAAAA
 ADMAMwAzAAAAAAAAAAAAAAAAAAAA/wAAAAAAAAAAAP8AMwAzAAAAAADMAAAA
@@ -63,8 +63,8 @@ AMwAMwBmAAAAAACZAAAAMwAAAAAA/wAzAGYAAAAAAMwAAAAzAAAAAAD/AAAA
 MwAAAA==
       EOS
 
-      # This is based on the Visibone Anglo-Centric Color Code List; this is
-      # an Adobe Color swatch version 2 (with names).
+      # This is based on the Visibone Anglo-Centric Colour Code List; this is
+      # an Adobe Colour swatch version 2 (with names).
       VISIBONE_V2 = <<-EOS
 AAIA2AAA/wD/AP8AAAAAAAAGAFcAaABpAHQAZQAAAADMAMwAzAAAAAAAAAoA
 UABhAGwAZQAgAEcAcgBhAHkAAAAAmQCZAJkAAAAAAAALAEwAaQBnAGgAdAAg
@@ -323,23 +323,23 @@ QwBNAFkASwAAAA0JxA2sEZQF3AAAAAsAVQBOAEsATgBPAFcATgAgADEAMwAA
 
       def test_version1
         v1 = VISIBONE_V1.unpack("m*")[0]
-        @aco = AdobeColor.new(v1)
+        @aco = AdobeColour.new(v1)
         assert_equal(216, @aco.size)
         assert_equal(1, @aco.version)
         assert_equal({:rgb => 216}, @aco.statistics)
-        assert_equal(Color::RGB::White, @aco[0])
+        assert_equal(Colour::RGB::White, @aco[0])
         assert_equal("#ff0033", @aco[-1].html)
         assert_equal(v1, @aco.to_aco)
       end
 
       def test_version2
         v2 = VISIBONE_V2.unpack("m*")[0]
-        @aco = AdobeColor.new(v2)
+        @aco = AdobeColour.new(v2)
         assert_equal(216, @aco.size)
         assert_equal(2, @aco.version)
         assert_equal({:rgb => 216}, @aco.statistics)
-        assert_equal(Color::RGB::White, @aco[0])
-        assert_equal(Color::RGB::White,
+        assert_equal(Colour::RGB::White, @aco[0])
+        assert_equal(Colour::RGB::White,
                      @aco["\000W\000h\000i\000t\000e"][0])
         assert_equal("#ff0033", @aco[-1].html)
         assert_equal("#ff0033",
@@ -351,16 +351,16 @@ QwBNAFkASwAAAA0JxA2sEZQF3AAAAAsAVQBOAEsATgBPAFcATgAgADEAMwAA
         o = VISIBONE_V2.unpack("m*")[0]
         v = o.dup
         v[0, 2] = [ 322 ].pack("n") # break the version
-        assert_raises(RuntimeError) { AdobeColor.new(v) }
+        assert_raises(RuntimeError) { AdobeColour.new(v) }
         v = o.dup
         v[2, 2] = [ 217 ].pack("n") # break the colour count
-        assert_raises(IndexError) { @aco = AdobeColor.new(v) }
+        assert_raises(IndexError) { @aco = AdobeColour.new(v) }
         v = o.dup
         v[14, 2] = [ 99 ].pack("n") # break the NULL before the name
-        assert_raises(IndexError) { @aco = AdobeColor.new(v) }
+        assert_raises(IndexError) { @aco = AdobeColour.new(v) }
         v = o.dup
         v[16, 2] = [ 18 ].pack("n") # break the length of the name
-        assert_raises(IndexError) { @aco = AdobeColor.new(v) }
+        assert_raises(IndexError) { @aco = AdobeColour.new(v) }
         v = o.dup
         v[28, 2] = [ 99 ].pack("n") # break the trailing null of the name
       end
@@ -369,35 +369,35 @@ QwBNAFkASwAAAA0JxA2sEZQF3AAAAAsAVQBOAEsATgBPAFcATgAgADEAMwAA
         File.open(@filename, "wb") do |f|
           f.write EXERCISE.unpack("m*")[0]
         end
-        @aco = AdobeColor.from_file(@filename)
+        @aco = AdobeColour.from_file(@filename)
         assert_equal(5, @aco.size)
         assert_equal(7, @aco.instance_variable_get(:@order).size)
       end
 
       def test_each
         v1 = VISIBONE_V1.unpack("m*")[0]
-        @aco = AdobeColor.new(v1)
-        @aco.each { |c| assert_kind_of(Color::RGB, c) }
+        @aco = AdobeColour.new(v1)
+        @aco.each { |c| assert_kind_of(Colour::RGB, c) }
       end
 
       def test_each_name
         v2 = VISIBONE_V2.unpack("m*")[0]
-        @aco = AdobeColor.new(v2)
+        @aco = AdobeColour.new(v2)
         assert_equal(216, @aco.size)
         assert_equal(2, @aco.version)
         @aco.each_name do |n, s|
           assert_equal(0, n[0]) if RUBY_VERSION < "1.9"
           assert_equal(1, s.size)
-          assert_kind_of(Color::RGB, s[0])
+          assert_kind_of(Colour::RGB, s[0])
         end
       end
 
       def test_values_at
         v2 = VISIBONE_V2.unpack("m*")[0]
-        @aco = AdobeColor.new(v2)
+        @aco = AdobeColour.new(v2)
         assert_equal(216, @aco.size)
         assert_equal(2, @aco.version)
-        assert_equal([Color::RGB::White, Color::RGB.from_html("#ff0033")],
+        assert_equal([Colour::RGB::White, Colour::RGB.from_html("#ff0033")],
                      @aco.values_at(0, -1))
       end
     end

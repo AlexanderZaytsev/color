@@ -1,10 +1,10 @@
 == Contributing
 
-I value any contribution to Color you can provide: a bug report, a feature
+I value any contribution to Colour you can provide: a bug report, a feature
 request, or code contributions.
 
-Code contributions to Color are especially <del>welcome</del>encouraged.
-Because Color is a complex codebase, there are a few guidelines:
+Code contributions to Colour are especially <del>welcome</del>encouraged.
+Because Colour is a complex codebase, there are a few guidelines:
 
 * Changes <strong>will not</strong> be accepted without tests.
 * Match my coding style.
@@ -19,11 +19,11 @@ Because Color is a complex codebase, there are a few guidelines:
 === Test Dependencies
 
 To run the test suite, you will need to install the development dependencies
-for Color. If you have Bundler, you can accomplish this easily:
+for Colour. If you have Bundler, you can accomplish this easily:
 
     $ bundle install
 
-Color uses Ryan Davis’s excellent {Hoe}[https://github.com/seattlerb/hoe]
+Colour uses Ryan Davis’s excellent {Hoe}[https://github.com/seattlerb/hoe]
 to manage the release process, and it adds a number of rake tasks. You will
 mostly be interested in:
 

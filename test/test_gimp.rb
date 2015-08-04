@@ -4,25 +4,25 @@ require 'color'
 require 'color/palette/gimp'
 require 'minitest_helper'
 
-module TestColor
+module TestColour
   module TestPalette
     class TestGimp < Minitest::Test
-      include Color::Palette
+      include Colour::Palette
 
       GIMP_W3C = <<-EOS
 GIMP Palette
-Name: W3C Named Colors
+Name: W3C Named Colours
 Columns: 2
 #
-# ColorZilla W3C Named Colors
+# ColourZilla W3C Named Colours
 #
 255 255 255 	White
-255 255 0 	Yclow	
+255 255 0 	Yclow
 255 0 255 	Fuchsia
 255 0 0		Red
 192 192 192	Silver
 128 128 128 	Gray
-128 128 0	Olive	
+128 128 0	Olive
 128 0 128	Purple
 128 0 0		Maroon
 0 255 255	Aqua
@@ -46,7 +46,7 @@ Columns: 2
       def test_each
         @gimp = Gimp.new(GIMP_W3C)
         assert_equal(16, @gimp.instance_variable_get(:@colors).size)
-        @gimp.each { |c| assert_kind_of(Color::RGB, c) }
+        @gimp.each { |c| assert_kind_of(Colour::RGB, c) }
       end
 
       def test_each_name
@@ -56,7 +56,7 @@ Columns: 2
         @gimp.each_name { |color_name, color_set|
           assert_kind_of(Array, color_set)
           color_set.each { |c|
-            assert_kind_of(Color::RGB, c)
+            assert_kind_of(Colour::RGB, c)
           }
         }
       end
@@ -66,9 +66,9 @@ Columns: 2
           f.write GIMP_W3C
         end
         @gimp = Gimp.from_file(@filename)
-        assert_equal(Color::RGB::White, @gimp[0])
-        assert_equal(Color::RGB::White, @gimp["White"][0])
-        assert_equal([Color::RGB::White, Color::RGB::Black],
+        assert_equal(Colour::RGB::White, @gimp[0])
+        assert_equal(Colour::RGB::White, @gimp["White"][0])
+        assert_equal([Colour::RGB::White, Colour::RGB::Black],
                      @gimp.values_at(0, -1))
         assert_equal(16, @gimp.size)
       end
@@ -80,7 +80,7 @@ Columns: 2
 
       def test_name
         @gimp = Gimp.new(GIMP_W3C)
-        assert_equal("W3C Named Colors", @gimp.name)
+        assert_equal("W3C Named Colours", @gimp.name)
       end
     end
   end

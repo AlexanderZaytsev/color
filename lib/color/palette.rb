@@ -1,4 +1,4 @@
 require 'color'
 
-module Color::Palette
+module Colour::Palette
 end

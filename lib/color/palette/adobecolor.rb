@@ -1,48 +1,48 @@
 require 'color/palette'
 
-# A class that can read an Adobe Color palette file (used for Photoshop
+# A class that can read an Adobe Colour palette file (used for Photoshop
 # swatches) and provide a Hash-like interface to the contents. Not all
 # colour formats in ACO files are supported. Based largely off the
 # information found by Larry Tesler[http://www.nomodes.com/aco.html].
 #
-# Not all Adobe Color files have named colours; all named entries are
+# Not all Adobe Colour files have named colours; all named entries are
 # returned as an array.
 #
-#   pal = Color::Palette::AdobeColor.from_file(my_aco_palette)
-#   pal[0]          => Color::RGB<...>
-#   pal["white"]    => [ Color::RGB<...> ]
-#   pal["unknown"]  => [ Color::RGB<...>, Color::RGB<...>, ... ]
+#   pal = Colour::Palette::AdobeColour.from_file(my_aco_palette)
+#   pal[0]          => Colour::RGB<...>
+#   pal["white"]    => [ Colour::RGB<...> ]
+#   pal["unknown"]  => [ Colour::RGB<...>, Colour::RGB<...>, ... ]
 #
-# AdobeColor palettes are always indexable by insertion order (an integer
+# AdobeColour palettes are always indexable by insertion order (an integer
 # key).
 #
 # Version 2 palettes use UTF-16 colour names.
-class Color::Palette::AdobeColor
+class Colour::Palette::AdobeColour
   include Enumerable
 
   class << self
-    # Create an AdobeColor palette object from the named file.
+    # Create an AdobeColour palette object from the named file.
     def from_file(filename)
-      File.open(filename, "rb") { |io| Color::Palette::AdobeColor.from_io(io) }
+      File.open(filename, "rb") { |io| Colour::Palette::AdobeColour.from_io(io) }
     end
 
-    # Create an AdobeColor palette object from the provided IO.
+    # Create an AdobeColour palette object from the provided IO.
     def from_io(io)
-      Color::Palette::AdobeColor.new(io.read)
+      Colour::Palette::AdobeColour.new(io.read)
     end
   end
 
   # Returns statistics about the nature of the colours loaded.
   attr_reader :statistics
   # Contains the "lost" colours in the palette. These colours could not be
-  # properly loaded (e.g., L*a*b* is not supported by Color, so it is
+  # properly loaded (e.g., L*a*b* is not supported by Colour, so it is
   # "lost") or are not understood by the algorithms.
   attr_reader :lost
 
   # Use this to convert the unsigned word to the signed word, if necessary.
   UwToSw = proc { |n| (n >= (2 ** 16)) ? n - (2 ** 32) : n } #:nodoc:
 
-  # Create a new AdobeColor palette from the palette file as a string.
+  # Create a new AdobeColour palette from the palette file as a string.
   def initialize(palette)
     @colors     = []
     @names      = {}
@@ -74,7 +74,7 @@ class Color::Palette::AdobeColor
 
     @version, count = palette.readwords 2
 
-    raise "Unknown AdobeColor palette version #@version." unless @version.between?(1, 2)
+    raise "Unknown AdobeColour palette version #@version." unless @version.between?(1, 2)
 
     count.times do
       space, w, x, y, z = palette.readwords 5
@@ -90,7 +90,7 @@ class Color::Palette::AdobeColor
               when 0 then # RGB
                 @statistics[:rgb] += 1
 
-                Color::RGB.new(w / 256, x / 256, y / 256)
+                Colour::RGB.new(w / 256, x / 256, y / 256)
               when 1 then # HS[BV] -- Convert to RGB
                 @statistics[:hsb] += 1
 
@@ -98,14 +98,14 @@ class Color::Palette::AdobeColor
                 s = x / 65535.0
                 v = y / 65535.0
 
-                if defined?(Color::HSB)
-                  Color::HSB.from_fraction(h, s, v)
+                if defined?(Colour::HSB)
+                  Colour::HSB.from_fraction(h, s, v)
                 else
                   @statistics[:converted] += 1
-                  if Color.near_zero_or_less?(s)
-                    Color::RGB.from_fraction(v, v, v)
+                  if Colour.near_zero_or_less?(s)
+                    Colour::RGB.from_fraction(v, v, v)
                   else
-                    if Color.near_one_or_more?(h)
+                    if Colour.near_one_or_more?(h)
                       vh = 0
                     else
                       vh = h * 6.0
@@ -117,18 +117,18 @@ class Color::Palette::AdobeColor
                     v3 = v.to_f * (1 - s.to_f * (1 - (vh - vi)))
 
                     case vi
-                    when 0 then Color::RGB.from_fraction(v, v3, v1)
-                    when 1 then Color::RGB.from_fraction(v2, v, v1)
-                    when 2 then Color::RGB.from_fraction(v1, v, v3)
-                    when 3 then Color::RGB.from_fraction(v1, v2, v)
-                    when 4 then Color::RGB.from_fraction(v3, v1, v)
-                    else Color::RGB.from_fraction(v, v1, v2)
+                    when 0 then Colour::RGB.from_fraction(v, v3, v1)
+                    when 1 then Colour::RGB.from_fraction(v2, v, v1)
+                    when 2 then Colour::RGB.from_fraction(v1, v, v3)
+                    when 3 then Colour::RGB.from_fraction(v1, v2, v)
+                    when 4 then Colour::RGB.from_fraction(v3, v1, v)
+                    else Colour::RGB.from_fraction(v, v1, v2)
                     end
                   end
                 end
               when 2 then # CMYK
                 @statistics[:cmyk] += 1
-                Color::CMYK.from_percent(100 - (w / 655.35),
+                Colour::CMYK.from_percent(100 - (w / 655.35),
                                          100 - (x / 655.35),
                                          100 - (y / 655.35),
                                          100 - (z / 655.35))
@@ -139,8 +139,8 @@ class Color::Palette::AdobeColor
                 a = [[-12800, UwToSw[x]].max, 12700].min / 100.0
                 b = [[-12800, UwToSw[x]].max, 12700].min / 100.0
 
-                if defined? Color::Lab
-                  Color::Lab.new(l, a, b)
+                if defined? Colour::Lab
+                  Colour::Lab.new(l, a, b)
                 else
                   [ space, w, x, y, z ]
                 end
@@ -148,7 +148,7 @@ class Color::Palette::AdobeColor
                 @statistics[:gray] += 1
 
                 g = [w, 10000].min / 100.0
-                Color::GrayScale.new(g)
+                Colour::GrayScale.new(g)
               when 9 then # Wide CMYK
                 @statistics[:wcmyk] += 1
 
@@ -156,7 +156,7 @@ class Color::Palette::AdobeColor
                 m = [x, 10000].min / 100.0
                 y = [y, 10000].min / 100.0
                 k = [z, 10000].min / 100.0
-                Color::CMYK.from_percent(c, m, y, k)
+                Colour::CMYK.from_percent(c, m, y, k)
               else
                 @statistics[space] += 1
                 [ space, w, x, y, z ]
@@ -223,15 +223,15 @@ class Color::Palette::AdobeColor
       cstr = case color
              when Array
                color
-             when Color::RGB
+             when Colour::RGB
                r = [(color.red * 256).round, 65535].min
                g = [(color.green * 256).round, 65535].min
                b = [(color.blue * 256).round, 65535].min
                [ 0, r, g, b, 0 ]
-             when Color::GrayScale
+             when Colour::GrayScale
                g = [(color.gray * 100).round, 10000].min
                [ 8, g, 0, 0, 0 ]
-             when Color::CMYK
+             when Colour::CMYK
                c = [(color.cyan * 100).round, 10000].min
                m = [(color.magenta * 100).round, 10000].min
                y = [(color.yellow * 100).round, 10000].min
